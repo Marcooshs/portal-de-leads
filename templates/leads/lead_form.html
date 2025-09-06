@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Leads - Formulário{% endblock %}
+
+{% block content %}
+<div class="mb-4 p-4 rounded-4 bg-brand-gradient text-white soft-shadow">
+  <div class="d-flex justify-content-between align-items-center">
+    <h1 class="h4 mb-0">
+      {% if object %}<i class="bi bi-pencil-square"></i> Editar Lead{% else %}<i class="bi bi-plus-circle"></i> Novo Lead{% endif %}
+    </h1>
+    <a class="btn btn-outline-light" href="{% url 'leads:list' %}">
+      <i class="bi bi-arrow-left"></i> Voltar
+    </a>
+  </div>
+</div>
+
+<div class="glass rounded-4 p-3 p-md-4 soft-shadow hover-lift">
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+
+    <div class="col-md-6">
+      <label class="form-label" for="{{ form.name.id_for_label }}">Nome</label>
+      {{ form.name }}
+      <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label" for="{{ form.email.id_for_label }}">E-mail</label>
+      {{ form.email }}
+      <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label" for="{{ form.phone.id_for_label }}">Telefone</label>
+      {{ form.phone }}
+      <div class="invalid-feedback d-block">{{ form.phone.errors }}</div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label" for="{{ form.company.id_for_label }}">Empresa</label>
+      {{ form.company }}
+      <div class="invalid-feedback d-block">{{ form.company.errors }}</div>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label" for="{{ form.status.id_for_label }}">Status</label>
+      {{ form.status }}
+      <div class="invalid-feedback d-block">{{ form.status.errors }}</div>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label" for="{{ form.source.id_for_label }}">Fonte</label>
+      {{ form.source }}
+      <div class="invalid-feedback d-block">{{ form.source.errors }}</div>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label" for="{{ form.owner.id_for_label }}">Owner</label>
+      {{ form.owner }}
+      <div class="invalid-feedback d-block">{{ form.owner.errors }}</div>
+    </div>
+
+    <div class="col-md-3">
+      <label class="form-label" for="{{ form.value.id_for_label }}">Valor estimado</label>
+      {{ form.value }}
+      <div class="invalid-feedback d-block">{{ form.value.errors }}</div>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label" for="{{ form.tags.id_for_label }}">Tags</label>
+      {{ form.tags }}
+      <div class="form-text">Segure Ctrl / Cmd para múltiplas tags.</div>
+      <div class="invalid-feedback d-block">{{ form.tags.errors }}</div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label" for="{{ form.notes.id_for_label }}">Notas</label>
+      {{ form.notes }}
+      <div class="invalid-feedback d-block">{{ form.notes.errors }}</div>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+      <button class="btn btn-gradient" type="submit">
+        <i class="bi bi-check2-circle"></i> Salvar
+      </button>
+      <a class="btn btn-outline-secondary" href="{% url 'leads:list' %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

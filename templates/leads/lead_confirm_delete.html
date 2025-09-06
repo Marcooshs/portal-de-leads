@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Remover Lead{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3"><i class="bi bi-trash"></i> Remover Lead</h1>
+<p>Confirma a remoção do lead <strong>{{ object }}</strong>?</p>
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i> Remover</button>
+  <a class="btn btn-outline-secondary" href="{% url 'leads:list' %}">Cancelar</a>
+</form>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Leads - Lista{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="p-4 p-md-5 rounded-4 bg-brand-gradient text-white soft-shadow mb-4">
+  <div class="d-flex align-items-center justify-content-between">
+    <div>
+      <h1 class="h3 mb-1">Sua pipeline de Leads</h1>
+      <p class="mb-0 opacity-75">Filtros reativos, exportação e ações rápidas.</p>
+    </div>
+    <div id="loading-indicator" hx-ext="loading-states" aria-live="polite">
+      <span class="ring"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="glass rounded-4 p-3 p-md-4 soft-shadow hover-lift mb-3">
+  <form id="filters-form" class="row g-2 g-md-3 align-items-end"
+        hx-get="."
+        hx-target="#lead-list"
+        hx-select="#lead-list"
+        hx-push-url="true"
+        hx-trigger="change, keyup delay:300ms from:#q"
+        hx-indicator="#loading-indicator">
+
+    <div class="col-12 col-md-4">
+      <label class="form-label" for="q">Buscar</label>
+      <input id="q" name="q" value="{{ request.GET.q }}" type="search" class="form-control ring-focus"
+             placeholder="Nome, email, telefone, empresa, notas…">
+    </div>
+
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="status">Status</label>
+      <select id="status" name="status" class="form-select ring-focus">
+        <option value="">Todos</option>
+        {% for key, label in leads.model.Status.choices %}
+          <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="source">Fonte</label>
+      <select id="source" name="source" class="form-select ring-focus">
+        <option value="">Todas</option>
+        {% for key, label in leads.model.Source.choices %}
+          <option value="{{ key }}" {% if request.GET.source == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="tag">Tag</label>
+      <select id="tag" name="tag" class="form-select ring-focus">
+        <option value="">Todas</option>
+        {% for t in tags %}
+          <option value="{{ t.id }}" {% if request.GET.tag == t.id|stringformat:'s' %}selected{% endif %}>{{ t.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-6 col-md-2">
+      <label class="form-label" for="owner">Owner</label>
+      <select id="owner" name="owner" class="form-select ring-focus">
+        <option value="">Todos</option>
+        {% for u in owners %}
+          <option value="{{ u.id }}" {% if request.GET.owner == u.id|stringformat:'s' %}selected{% endif %}>{{ u.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+      <a class="btn btn-outline-secondary hover-lift"
+         href="{% url 'leads:list' %}"
+         hx-get="{% url 'leads:list' %}"
+         hx-target="#lead-list"
+         hx-select="#lead-list"
+         hx-push-url="true"
+         hx-indicator="#loading-indicator">
+        Limpar
+      </a>
+      <a class="btn btn-gradient hover-lift" href="{% url 'leads:create' %}">
+        <i class="bi bi-plus-lg"></i> Novo Lead
+      </a>
+    </div>
+  </form>
+</div>
+
+<!-- Lista (swap HTMX) -->
+<div id="lead-list">
+  {% include "leads/_lead_table.html" %}
+</div>
+
+<!-- FAB de atalho -->
+<a href="{% url 'leads:create' %}" class="btn btn-gradient rounded-circle fab soft-shadow hover-lift" title="Novo Lead">
+  <i class="bi bi-plus-lg fs-4"></i>
+</a>
+
+<!-- Modal de confirmação de remoção (Bootstrap puro, sem Alpine) -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass">
+      <form id="deleteForm" method="post" action="">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-trash"></i> Remover Lead</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Tem certeza que deseja remover este lead? Esta ação não pode ser desfeita.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Remover</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // injeta a URL correta no form quando o modal é aberto
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalEl = document.getElementById('confirmDeleteModal');
+    modalEl.addEventListener('show.bs.modal', (ev) => {
+      const btn = ev.relatedTarget;                       // botão que abriu o modal
+      const url = btn?.getAttribute('data-action-url') || '';
+      modalEl.querySelector('#deleteForm').setAttribute('action', url);
+    });
+  });
+</script>
+{% endblock %}

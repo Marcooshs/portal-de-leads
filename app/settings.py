@@ -1,0 +1,135 @@
+from pathlib import Path
+import os
+
+# -------- .env ----------
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
+# -------- Paths ---------
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# -------- Segurança -----
+SECRET_KEY = os.getenv("SECRET_KEY", "change-me-para-um-valor-seguro")
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+def _csv_env(name: str, default: str = "") -> list[str]:
+    return [i.strip() for i in os.getenv(name, default).split(",") if i.strip()]
+
+ALLOWED_HOSTS = _csv_env("ALLOWED_HOSTS", "localhost,127.0.0.1")
+CSRF_TRUSTED_ORIGINS = _csv_env("CSRF_TRUSTED_ORIGINS", "")  # ex: https://seu-dominio.com
+
+# -------- Apps ----------
+INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",  # ajuda no dev a servir estáticos c/ Whitenoise
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "leads",
+    "widget_tweaks",
+]
+
+# -------- Middleware ----
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # servir estáticos em prod
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+# -------- URLs / ASGI / WSGI ----
+ROOT_URLCONF = "app.urls"
+WSGI_APPLICATION = "app.wsgi.application"
+ASGI_APPLICATION = "app.asgi.application"
+
+# -------- Templates -----
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],  # use templates/ na raiz
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": 'portal_leads',
+        "USER": 'portal_leads',
+        "PASSWORD": 'Portal_leads#3G',
+        "HOST": 'localhost',
+        "PORT": '5432',
+        "CONN_MAX_AGE": 600,
+    }
+}
+
+# -------- Passwords -----
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# -------- I18N / TZ -----
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "pt-br")
+TIME_ZONE = os.getenv("TIME_ZONE", "America/Sao_Paulo")
+USE_I18N = True
+USE_TZ = True
+
+# -------- Estáticos/Mídia -----
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+WHITENOISE_MAX_AGE = int(os.getenv("WHITENOISE_MAX_AGE", "31536000"))  # 1 ano
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# -------- Email (SMTP real) -----
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False") == "True"  # use 465 se True
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+
+# -------- Auth redirects -----
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "leads:list"
+LOGOUT_REDIRECT_URL = "login"
+
+# -------- Segurança extra (produção/HTTPS) -----
+SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False") == "True"
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False") == "True"
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False") == "True"
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # se atrás de proxy
+
+# -------- PK default --------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
