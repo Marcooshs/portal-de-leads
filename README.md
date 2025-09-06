@@ -1,7 +1,6 @@
 # Portal de Leads (Django)
 
 Aplicação web para gestão de leads com **autenticação**, **CRUD**, **filtros/busca**, **tags**, **importação/exportação CSV**, **notificação por e-mail** e UI com **Bootstrap**.  
-Ideal para portfólio e como base de um CRM simples.
 
 ---
 
