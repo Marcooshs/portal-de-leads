@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="pt-br">
+  <body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111;">
+    <h2 style="margin:0 0 12px;">Novo Lead</h2>
+    <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
+      <tr><td><b>Nome:</b></td><td>{{ lead.name }}</td></tr>
+      <tr><td><b>Email:</b></td><td>{{ lead.email|default:"-" }}</td></tr>
+      <tr><td><b>Empresa:</b></td><td>{{ lead.company|default:"-" }}</td></tr>
+      <tr><td><b>Status:</b></td><td>{{ lead.get_status_display }}</td></tr>
+      <tr><td><b>Fonte:</b></td><td>{{ lead.get_source_display }}</td></tr>
+      <tr><td><b>Criado por:</b></td><td>{{ user.get_username }}</td></tr>
+    </table>
+    <p style="color:#666;font-size:12px;margin-top:16px;">
+      Enviado automaticamente pelo Portal de Leads.
+    </p>
+  </body>
+</html>
