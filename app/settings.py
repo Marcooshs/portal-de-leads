@@ -12,8 +12,9 @@ except Exception:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -------- Segurança -----
-SECRET_KEY = os.getenv("SECRET_KEY", "change-me-para-um-valor-seguro")
-DEBUG = os.getenv("DEBUG", "True") == "True"
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY and not DEBUG:
+    raise RuntimeError("SECRET_KEY", "o4&=c4l#&i5glz)pwkvvl@59g5q1nuk1jw=$+77nq4-%(&#rz&")
 
 def _csv_env(name: str, default: str = "") -> list[str]:
     return [i.strip() for i in os.getenv(name, default).split(",") if i.strip()]
