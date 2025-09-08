@@ -71,14 +71,15 @@ TEMPLATES = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": 'portal_leads',
-        "USER": 'portal_leads',
-        "PASSWORD": 'Portal_leads#3G',
-        "HOST": 'localhost',
-        "PORT": '5432',
+        "NAME": os.getenv("PG_NAME", "portal_leads"),
+        "USER": os.getenv("PG_USER", "portal_leads"),
+        "PASSWORD": os.getenv("PG_PASSWORD", ""),
+        "HOST": os.getenv("PG_HOST", "localhost"),  # se Docker: "db"
+        "PORT": os.getenv("PG_PORT", "5432"),
         "CONN_MAX_AGE": 600,
     }
 }
+
 
 # -------- Passwords -----
 AUTH_PASSWORD_VALIDATORS = [

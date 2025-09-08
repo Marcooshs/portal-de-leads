@@ -7,7 +7,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Q
 from django.http import StreamingHttpResponse
@@ -17,6 +16,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from .forms import LeadForm, CSVImportForm
 from .models import Lead, Tag
+from .mailers import send_templated_mail
 
 
 class LeadListView(LoginRequiredMixin, ListView):
@@ -117,19 +117,32 @@ class LeadCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("leads:list")
 
     def form_valid(self, form):
-        resp = super().form_valid(form)
-        lead = self.object
-        # Notificação por email (usa suas configs SMTP do settings)
-        subject = f"Novo Lead: {lead.name}"
-        body = (
-            f"Lead criado por {self.request.user}:\n"
-            f"{lead.name} - {lead.email} - {lead.company}\n"
-            f"Status: {lead.get_status_display()} | Fonte: {lead.get_source_display()}"
-        )
-        if self.request.user.email:
-            send_mail(subject, body, None, [self.request.user.email], fail_silently=True)
-        messages.success(self.request, "Lead criado com sucesso ✔️")
-        return resp
+        lead = form.save(commit= False)
+        if not lead.owner_id:
+            lead.owner = self.request.user
+        lead.save()
+        form.save_m2m()
+
+        # Escolha do provedor por querystring (?provider=gmail|o365); se não vier, usa o padrão do .env
+        provider = (self.request.GET.get('provider') or '').lower() or None
+        to = [self.request.user.email] if self.request.user.email else []
+
+        if to:
+            try:
+                subject = f'Novo Lead: {lead.name}'
+                context = {'lead': lead, 'user': self.request.user}
+                send_templated_mail(
+                    provider= provider,
+                    subject= subject,
+                    template_base= 'new_lead',
+                    context= context,
+                    to= to,
+                )
+            except Exception as exc:
+                messages.warning(self.request,f'Lead criado, mas falhou envio de e-mail: {exc}')
+
+        messages.success(self.request,f'Lead criado com sucesso ✔️')
+        return super().form_valid(form)
 
 class LeadUpdateView(LoginRequiredMixin, UpdateView):
     model = Lead
