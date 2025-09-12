@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${PG_NAME:-portal_leads}
+      POSTGRES_USER: ${PG_USER:-portal_leads}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-Portal_leads#3G}
+    ports:
+      - "5432:5432"         # troque para "5433:5432" se 5432 estiver ocupada no Windows
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-portal_leads} -d ${POSTGRES_DB:-portal_leads}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    build: .
+    env_file: .env
+    environment:
+      DJANGO_ENV: dev
+      COLLECTSTATIC: "0"
+      PG_HOST: db                       # <- ESSENCIAL
+      PG_NAME: ${PG_NAME:-portal_leads} # garante valores mesmo sem .env
+      PG_USER: ${PG_USER:-portal_leads}
+      PG_PASSWORD: ${PG_PASSWORD:-Portal_leads#3G}
+      PG_PORT: ${PG_PORT:-5432}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
