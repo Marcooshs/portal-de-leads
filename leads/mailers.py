@@ -1,5 +1,3 @@
-
-# leads/mailers.py
 from typing import Iterable, Optional
 from django.conf import settings
 from django.core.mail import get_connection, EmailMultiAlternatives
@@ -18,12 +16,12 @@ def _conn_for(provider: Optional[str] = None):
 
     conn = get_connection(
         backend=settings.EMAIL_BACKEND,
-        host=conf["HOST"],
-        port=conf["PORT"],
-        username=conf["USER"],
-        password=conf["PASSWORD"],
-        use_tls=conf["USE_TLS"],
-        use_ssl=conf["USE_SSL"],
+        host=conf['HOST'],
+        port=conf['PORT'],
+        username=conf['USER'],
+        password=conf['PASSWORD'],
+        use_tls=conf['USE_TLS'],
+        use_ssl=conf['USE_SSL'],
         timeout=15,
     )
     return conn, conf
@@ -45,7 +43,7 @@ def send_mail_using(
     Retorna a quantidade de mensagens enviadas (0 ou 1).
     """
     conn, conf = _conn_for(provider)
-    sender = from_email or conf["DEFAULT_FROM_EMAIL"] or conf["USER"]
+    sender = from_email or conf['DEFAULT_FROM_EMAIL'] or conf['USER']
     msg = EmailMultiAlternatives(
         subject=subject,
         body=text_body,
@@ -57,7 +55,7 @@ def send_mail_using(
         connection=conn,
     )
     if html_body:
-        msg.attach_alternative(html_body, "text/html")
+        msg.attach_alternative(html_body, 'text/html')
     return msg.send()
 
 
@@ -78,10 +76,10 @@ def send_templated_mail(
       - leads/templates/email/<template_base>.html
     """
     conn, conf = _conn_for(provider)
-    sender = from_email or conf["DEFAULT_FROM_EMAIL"] or conf["USER"]
+    sender = from_email or conf['DEFAULT_FROM_EMAIL'] or conf['USER']
 
-    text_body = render_to_string(f"email/{template_base}.txt", context)
-    html_body = render_to_string(f"email/{template_base}.html", context)
+    text_body = render_to_string(f'email/{template_base}.txt', context)
+    html_body = render_to_string(f'email/{template_base}.html', context)
 
     msg = EmailMultiAlternatives(
         subject=subject,
@@ -94,5 +92,5 @@ def send_templated_mail(
         connection=conn,
     )
     if html_body:
-        msg.attach_alternative(html_body, "text/html")
+        msg.attach_alternative(html_body, 'text/html')
     return msg.send()
