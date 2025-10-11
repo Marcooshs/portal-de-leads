@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Importar CSV{% endblock %}
+
+{% block content %}
+<div class="mb-4 p-4 rounded-4 bg-brand-gradient text-white soft-shadow d-flex justify-content-between align-items-center">
+  <h1 class="h4 mb-0"><i class="bi bi-upload"></i> Importar CSV</h1>
+  <a class="btn btn-outline-light" href="{% url 'leads:list' %}"><i class="bi bi-arrow-left"></i> Voltar</a>
+</div>
+
+<div class="glass rounded-4 p-3 p-md-4 soft-shadow hover-lift">
+  <form method="post" enctype="multipart/form-data" hx-encoding="multipart/form-data" class="row g-3">
+    {% csrf_token %}
+    <div class="col-12">
+      <label class="form-label" for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+      {{ form.file }}
+      <div class="invalid-feedback d-block">{{ form.file.errors }}</div>
+      <div class="form-text mt-1">
+        {{ form.file.help_text }}<br>
+        Exemplo de cabeçalho: <code>name,email,phone,company,source,value,notes,tags</code>
+      </div>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+      <button class="btn btn-gradient" type="submit">
+        <i class="bi bi-play-circle"></i> Importar
+      </button>
+      <a class="btn btn-outline-secondary" href="{% url 'leads:list' %}">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<div class="alert alert-secondary mt-3 soft-shadow glass">
+  <i class="bi bi-info-circle"></i>
+  Dica: use <code>WEB, ADS, REF, EVT, OTH</code> para <strong>source</strong> e
+  <code>NEW, QLF, WON, LST, CLD</code> para <strong>status</strong>.
+</div>
+{% endblock %}

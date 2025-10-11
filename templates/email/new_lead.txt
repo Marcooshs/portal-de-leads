@@ -1,0 +1,8 @@
+Novo Lead
+
+Nome: {{ lead.name }}
+Email: {{ lead.email|default:"-" }}
+Empresa: {{ lead.company|default:"-" }}
+Status: {{ lead.get_status_display }}
+Fonte: {{ lead.get_source_display }}
+Criado por: {{ user.get_username }}

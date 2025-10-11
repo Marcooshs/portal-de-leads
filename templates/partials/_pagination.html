@@ -1,0 +1,35 @@
+{% if is_paginated %}
+<nav aria-label="Paginação">
+  <ul class="pagination justify-content-center my-3">
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+      <a class="page-link"
+         hx-get="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|urlencode }}"
+         hx-target="#lead-list"
+         hx-select="#lead-list"
+         hx-push-url="true"
+         hx-indicator="#loading-indicator">Anterior</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+
+    <li class="page-item disabled"><span class="page-link">
+      Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    </span></li>
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+      <a class="page-link"
+         hx-get="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|urlencode }}"
+         hx-target="#lead-list"
+         hx-select="#lead-list"
+         hx-push-url="true"
+         hx-indicator="#loading-indicator">Próxima</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}

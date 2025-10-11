@@ -1,0 +1,82 @@
+<div class="table-responsive glass rounded-4 soft-shadow">
+  <table class="table table-hover align-middle mb-0">
+    <thead>
+      <tr class="text-secondary">
+        <th>Nome</th>
+        <th>Empresa</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Fonte</th>
+        <th>Owner</th>
+        <th class="text-end">Valor</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if leads %}
+        {% for lead in leads %}
+        <tr id="row-{{ lead.id }}">
+          <td class="fw-semibold">
+            <a class="text-decoration-none" href="{% url 'leads:update' lead.pk %}">
+              {{ lead.name }}
+            </a>
+            {% if lead.tags.all %}
+              <div class="small mt-1">
+                {% for t in lead.tags.all %}
+                  <span class="badge rounded-pill text-bg-secondary">{{ t.name }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </td>
+          <td>{{ lead.company|default:"—" }}</td>
+          <td>
+            {% if lead.email %}
+              <a href="mailto:{{ lead.email }}" class="text-decoration-none">
+                <i class="bi bi-envelope-open"></i> {{ lead.email }}
+              </a>
+            {% else %} — {% endif %}
+          </td>
+          <td>
+            {% if lead.status == 'WON' %}
+              <span class="badge badge-soft badge-won"><i class="bi bi-trophy"></i> {{ lead.get_status_display }}</span>
+            {% elif lead.status == 'LST' %}
+              <span class="badge badge-soft badge-lst"><i class="bi bi-x-octagon"></i> {{ lead.get_status_display }}</span>
+            {% elif lead.status == 'QLF' %}
+              <span class="badge badge-soft badge-qlf"><i class="bi bi-check2-circle"></i> {{ lead.get_status_display }}</span>
+            {% elif lead.status == 'CLD' %}
+              <span class="badge badge-soft badge-cld"><i class="bi bi-snow"></i> {{ lead.get_status_display }}</span>
+            {% else %}
+              <span class="badge badge-soft badge-new"><i class="bi bi-stars"></i> {{ lead.get_status_display }}</span>
+            {% endif %}
+          </td>
+          <td>{{ lead.get_source_display }}</td>
+          <td>{{ lead.owner.username|default:"—" }}</td>
+          <td class="text-end">R$ {{ lead.value|floatformat:2 }}</td>
+          <td class="text-nowrap">
+            <a class="btn btn-sm btn-outline-primary hover-lift" href="{% url 'leads:update' lead.pk %}" title="Editar">
+              <i class="bi bi-pencil"></i>
+            </a>
+
+            <!-- Botão de excluir: abre o modal e leva a URL na data-attribute -->
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger hover-lift"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmDeleteModal"
+              data-action-url="{% url 'leads:delete' lead.pk %}"
+              title="Remover">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="8" class="text-center text-secondary py-5">
+          <i class="bi bi-search"></i> Sem resultados para os filtros atuais.
+        </td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% include "partials/_pagination.html" %}

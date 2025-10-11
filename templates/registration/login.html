@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Entrar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="p-4 rounded-4 bg-brand-gradient text-white soft-shadow mb-3 text-center">
+      <h1 class="h4 mb-0"><i class="bi bi-box-arrow-in-right"></i> Entrar</h1>
+    </div>
+
+    <div class="glass rounded-4 soft-shadow p-4 hover-lift">
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {# redirecionamento pós-login, só se existir #}
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+        {% elif next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        {# campos do AuthenticationForm (garantem name/id corretos) #}
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label|default:"Usuário" }}</label>
+          {{ form.username }}
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label|default:"Senha" }}</label>
+          {{ form.password }}
+        </div>
+
+        {# mensagens de erro reais do form #}
+        {% if form and form.non_field_errors %}
+          <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-circle me-2"></i>
+            <div>{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+          </div>
+        {% endif %}
+
+        <button class="btn btn-gradient w-100" type="submit">Acessar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{# melhoria estética: aplicar classes Bootstrap nos inputs gerados pelo form #}
+{% block extra_js %}
+<script>
+  // adiciona classes Bootstrap aos inputs do AuthenticationForm gerado pelo Django
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('form input[type="text"], form input[type="password"]').forEach(el => {
+      el.classList.add('form-control','ring-focus');
+      if(el.name === 'username') el.setAttribute('autocomplete','username');
+      if(el.name === 'password') el.setAttribute('autocomplete','current-password');
+    });
+  });
+</script>
+{% endblock %}
+{% endblock %}
