@@ -1,33 +1,6 @@
-@"
 * text=auto
 *.sh text eol=lf
-"@ | Out-File -Encoding utf8 .gitattributes
-
-@"
-DEBUG=True
-SECRET_KEY=changeme
-ALLOWED_HOSTS=localhost,127.0.0.1
-USE_SQLITE=False
-PG_NAME=portal_leads
-PG_USER=portal_leads
-PG_PASSWORD=
-PG_HOST=db
-PG_PORT=5432
-
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_USE_SSL=False
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=Portal de Leads <no-reply@example.com>
-
-LANGUAGE_CODE=pt-br
-TIME_ZONE=America/Sao_Paulo
-
-WHITENOISE_MAX_AGE=31536000
-
-SECURE_SSL_REDIRECT=False
-SESSION_COOKIE_SECURE=False
-CSRF_COOKIE_SECURE=False
-"@ | Out-File -Encoding utf8 .env.example
+*.py text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
