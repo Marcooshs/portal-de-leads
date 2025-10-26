@@ -30,11 +30,11 @@ def _csv_env(name: str, default: str = "") -> list[str]:
     return [i.strip() for i in os.getenv(name, default).split(",") if i.strip()]
 
 ALLOWED_HOSTS = _csv_env("ALLOWED_HOSTS", "localhost,127.0.0.1")
-CSRF_TRUSTED_ORIGINS = _csv_env("CSRF_TRUSTED_ORIGINS", "")  # ex: https://seu-dominio.com
+CSRF_TRUSTED_ORIGINS = _csv_env("CSRF_TRUSTED_ORIGINS", "")
 
 # -------- Apps ----------
 INSTALLED_APPS = [
-    "whitenoise.runserver_nostatic",  # ajuda no dev a servir estáticos c/ Whitenoise
+    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 # -------- Middleware ----
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # servir estáticos em prod
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -66,7 +66,7 @@ ASGI_APPLICATION = "app.asgi.application"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # use templates/ na raiz
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -96,7 +96,7 @@ else:
             "NAME": os.getenv("PG_NAME", "portal_leads"),
             "USER": os.getenv("PG_USER", "portal_leads"),
             "PASSWORD": os.getenv("PG_PASSWORD", ""),
-            "HOST": os.getenv("PG_HOST", "localhost"),  # no container virá 'db'
+            "HOST": os.getenv("PG_HOST", "localhost"),
             "PORT": os.getenv("PG_PORT", "5432"),
             "CONN_MAX_AGE": 600,
         }
@@ -123,9 +123,9 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
-WHITENOISE_MAX_AGE = int(os.getenv("WHITENOISE_MAX_AGE", "31536000"))  # 1 ano
-WHITENOISE_AUTOREFRESH = DEBUG   # serve arquivos direto do app em dev, sem collectstatic
-WHITENOISE_USE_FINDERS = DEBUG   # ignora manifest em dev e usa os finders
+WHITENOISE_MAX_AGE = int(os.getenv("WHITENOISE_MAX_AGE", "31536000"))
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_USE_FINDERS = DEBUG
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -135,7 +135,7 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = _env_bool("EMAIL_USE_TLS", "True")
-EMAIL_USE_SSL = _env_bool("EMAIL_USE_SSL", "False")  # use 465 se True
+EMAIL_USE_SSL = _env_bool("EMAIL_USE_SSL", "False")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
@@ -175,7 +175,7 @@ CSRF_COOKIE_SECURE = _env_bool("CSRF_COOKIE_SECURE")
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
-# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # se atrás de proxy
+
 
 # -------- PK default --------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
